@@ -1,0 +1,917 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport"
+        content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
+    <title>Happy Birthday, Delvia! 🎂🐧💖</title>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Caveat:wght@600;700&family=Poppins:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet">
+
+    <!-- Canvas Confetti for Celebration Effect -->
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.3/dist/confetti.browser.min.js"></script>
+
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        :root {
+            --primary: #ff4081;
+            --primary-dark: #c2185b;
+            --primary-light: #ff80ab;
+            --bg-card: rgba(255, 255, 255, 0.94);
+            --text-main: #374151;
+            --text-muted: #6b7280;
+        }
+
+        html,
+        body {
+            width: 100%;
+            height: 100%;
+        }
+
+        body {
+            background: linear-gradient(135deg, #ffe4e6 0%, #ffd1dc 40%, #e8d5f5 100%);
+            min-height: 100vh;
+            min-height: 100dvh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            font-family: 'Poppins', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            overflow-x: hidden;
+            position: relative;
+            padding: max(20px, env(safe-area-inset-top)) 16px max(24px, env(safe-area-inset-bottom)) 16px;
+        }
+
+        /* Background Floating Hearts / Emojis */
+        .heart-bg {
+            position: fixed;
+            top: -10vh;
+            user-select: none;
+            pointer-events: none;
+            animation: fall linear forwards;
+            z-index: 1;
+        }
+
+        @keyframes fall {
+            to {
+                transform: translateY(115vh) rotate(360deg);
+            }
+        }
+
+        /* Interactive Touch Sparks */
+        .tap-particle {
+            position: fixed;
+            pointer-events: none;
+            user-select: none;
+            z-index: 9999;
+            transform: translate(-50%, -50%) scale(1);
+            animation: popFade 1s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+            font-size: 24px;
+        }
+
+        @keyframes popFade {
+            0% {
+                opacity: 1;
+                transform: translate(-50%, -50%) scale(0.4) translateY(0);
+            }
+
+            50% {
+                opacity: 1;
+                transform: translate(-50%, -50%) scale(1.3) translateY(-25px);
+            }
+
+            100% {
+                opacity: 0;
+                transform: translate(-50%, -50%) scale(0.9) translateY(-50px);
+            }
+        }
+
+        /* Main Container */
+        .container {
+            width: 100%;
+            max-width: 440px;
+            z-index: 10;
+            text-align: center;
+            margin: auto;
+            transition: all 0.5s ease;
+        }
+
+        /* -------------------------------------------
+           SCENE 1: STARTER CAKE & CANDLE
+        -------------------------------------------- */
+        #starterScene {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            width: 100%;
+            transition: opacity 0.7s cubic-bezier(0.4, 0, 0.2, 1), transform 0.7s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        #starterScene.fade-out {
+            opacity: 0;
+            transform: scale(0.9) translateY(-20px);
+            pointer-events: none;
+        }
+
+        .starter-card {
+            background: var(--bg-card);
+            border-radius: 28px;
+            padding: clamp(24px, 6vw, 36px) clamp(16px, 5vw, 24px);
+            box-shadow: 0 16px 40px rgba(223, 115, 155, 0.28),
+                0 2px 6px rgba(0, 0, 0, 0.04);
+            border: 1px solid rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            width: 100%;
+            position: relative;
+        }
+
+        .cake-title {
+            font-size: clamp(1.4rem, 5.5vw, 1.8rem);
+            color: #ad1457;
+            font-weight: 700;
+            margin-bottom: 6px;
+            line-height: 1.35;
+        }
+
+        .cake-subtitle {
+            color: var(--text-muted);
+            font-size: clamp(0.85rem, 3.8vw, 0.95rem);
+            margin-bottom: 24px;
+            line-height: 1.5;
+            transition: color 0.3s;
+        }
+
+        /* Interactive Cake Area */
+        .cake-clickable-area {
+            position: relative;
+            cursor: pointer;
+            display: inline-block;
+            margin: 10px auto 20px;
+            user-select: none;
+            touch-action: manipulation;
+            transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+
+        .cake-clickable-area:active {
+            transform: scale(0.96);
+        }
+
+        /* Cake SVG / CSS Illustration */
+        .cake-box {
+            position: relative;
+            width: 200px;
+            height: 170px;
+            margin: 0 auto;
+        }
+
+        /* Candle */
+        .candle {
+            position: absolute;
+            top: 15px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 14px;
+            height: 48px;
+            background: repeating-linear-gradient(-45deg,
+                    #ffffff,
+                    #ffffff 6px,
+                    #ff4081 6px,
+                    #ff4081 12px);
+            border-radius: 4px 4px 2px 2px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.15);
+            z-index: 5;
+        }
+
+        .wick {
+            position: absolute;
+            top: -9px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 3px;
+            height: 10px;
+            background-color: #424242;
+            border-radius: 2px;
+        }
+
+        /* Glowing Flame */
+        .flame {
+            position: absolute;
+            top: -26px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 18px;
+            height: 28px;
+            background: radial-gradient(ellipse at bottom, #ffffff 10%, #ffeb3b 40%, #ff5722 85%);
+            border-radius: 50% 50% 35% 35% / 60% 60% 40% 40%;
+            box-shadow: 0 0 16px rgba(255, 152, 0, 0.9), 0 0 30px rgba(255, 87, 34, 0.6);
+            animation: flicker 1.2s infinite ease-in-out alternate;
+            transform-origin: 50% 90%;
+            transition: opacity 0.3s, transform 0.3s;
+        }
+
+        .flame.blown-out {
+            opacity: 0 !important;
+            transform: translateX(-50%) scale(0.1) !important;
+        }
+
+        /* Smoke Puff */
+        .smoke {
+            position: absolute;
+            top: -30px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 24px;
+            opacity: 0;
+            pointer-events: none;
+            transition: all 1s ease-out;
+        }
+
+        .smoke.puff-up {
+            opacity: 1;
+            transform: translate(-50%, -40px) scale(1.4);
+        }
+
+        @keyframes flicker {
+            0% {
+                transform: translateX(-50%) rotate(-2deg) scale(1);
+            }
+
+            25% {
+                transform: translateX(-50%) rotate(2deg) scale(1.06);
+            }
+
+            50% {
+                transform: translateX(-50%) rotate(-1.5deg) scale(0.96);
+            }
+
+            75% {
+                transform: translateX(-50%) rotate(1.8deg) scale(1.03);
+            }
+
+            100% {
+                transform: translateX(-50%) rotate(-1deg) scale(1.02);
+            }
+        }
+
+        /* Cake Layers */
+        .cake-top-tier {
+            position: absolute;
+            bottom: 46px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 120px;
+            height: 52px;
+            background: #ffc1e3;
+            border-radius: 12px 12px 6px 6px;
+            box-shadow: inset 0 -4px 0 rgba(0, 0, 0, 0.08);
+            z-index: 3;
+        }
+
+        .cake-top-tier::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 16px;
+            background: #ffffff;
+            border-radius: 12px 12px 0 0;
+            box-shadow: 0 3px 0 #f8bbd0;
+        }
+
+        .cake-bottom-tier {
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 170px;
+            height: 54px;
+            background: #f8bbd0;
+            border-radius: 14px 14px 8px 8px;
+            box-shadow: inset 0 -5px 0 rgba(0, 0, 0, 0.08);
+            z-index: 2;
+        }
+
+        .cake-bottom-tier::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 16px;
+            background: #ffffff;
+            border-radius: 14px 14px 0 0;
+            box-shadow: 0 3px 0 #f48fb1;
+        }
+
+        /* Plate */
+        .plate {
+            position: absolute;
+            bottom: -8px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 204px;
+            height: 14px;
+            background: #ffffff;
+            border-radius: 20px;
+            box-shadow: 0 4px 12px rgba(173, 20, 87, 0.15);
+            z-index: 1;
+        }
+
+        /* Cherries */
+        .cherry {
+            position: absolute;
+            top: -9px;
+            width: 16px;
+            height: 16px;
+            background: radial-gradient(circle at 35% 35%, #ff5252, #c62828);
+            border-radius: 50%;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+            z-index: 4;
+        }
+
+        .cherry.left {
+            left: 8px;
+        }
+
+        .cherry.right {
+            right: 8px;
+        }
+
+        /* Instruction Tap Button / Badge */
+        .blow-guide-btn {
+            background: linear-gradient(45deg, var(--primary), var(--primary-light));
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 50px;
+            font-size: clamp(0.9rem, 3.8vw, 1rem);
+            font-weight: 600;
+            cursor: pointer;
+            box-shadow: 0 6px 20px rgba(255, 64, 129, 0.35);
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            animation: pulseHint 2s infinite;
+            touch-action: manipulation;
+        }
+
+        @keyframes pulseHint {
+
+            0%,
+            100% {
+                transform: scale(1);
+                box-shadow: 0 6px 20px rgba(255, 64, 129, 0.35);
+            }
+
+            50% {
+                transform: scale(1.04);
+                box-shadow: 0 10px 26px rgba(255, 64, 129, 0.5);
+            }
+        }
+
+        /* -------------------------------------------
+           SCENE 2: LETTER & ENVELOPE (HIDDEN AT START)
+        -------------------------------------------- */
+        #letterScene {
+            display: none;
+            opacity: 0;
+            transform: scale(0.95) translateY(20px);
+            transition: opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1), transform 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+            width: 100%;
+        }
+
+        #letterScene.active {
+            display: block;
+            opacity: 1;
+            transform: scale(1) translateY(0);
+        }
+
+        /* Header Title */
+        .title {
+            font-size: clamp(1.35rem, 5.5vw, 1.75rem);
+            color: #ad1457;
+            font-weight: 700;
+            margin-bottom: 16px;
+            line-height: 1.35;
+            text-shadow: 0 2px 8px rgba(173, 20, 87, 0.12);
+            padding: 0 8px;
+        }
+
+        /* Amplop & Kartu Responsif */
+        .envelope-wrapper {
+            background: var(--bg-card);
+            border-radius: 26px;
+            padding: clamp(22px, 6vw, 32px) clamp(16px, 5vw, 24px);
+            box-shadow: 0 16px 40px rgba(223, 115, 155, 0.28),
+                0 2px 6px rgba(0, 0, 0, 0.04);
+            border: 1px solid rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            position: relative;
+            word-wrap: break-word;
+        }
+
+        .pinguin-icon {
+            font-size: clamp(52px, 14vw, 68px);
+            margin-bottom: 8px;
+            display: inline-block;
+            animation: bounce 2s infinite ease-in-out;
+            filter: drop-shadow(0 6px 12px rgba(255, 128, 171, 0.3));
+        }
+
+        .subtext {
+            color: var(--text-muted);
+            font-size: clamp(0.85rem, 3.8vw, 0.95rem);
+            margin-bottom: 22px;
+            line-height: 1.5;
+            padding: 0 10px;
+        }
+
+        /* Tombol Buka Surat dengan Mobile Touch Feedback */
+        .btn-open {
+            background: linear-gradient(45deg, var(--primary), var(--primary-light));
+            color: white;
+            border: none;
+            padding: 14px 32px;
+            min-height: 48px;
+            border-radius: 50px;
+            font-size: clamp(0.95rem, 4vw, 1.05rem);
+            font-weight: 600;
+            cursor: pointer;
+            box-shadow: 0 8px 24px rgba(255, 64, 129, 0.38);
+            transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.2s;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            touch-action: manipulation;
+        }
+
+        .btn-open:hover {
+            transform: translateY(-2px) scale(1.02);
+            box-shadow: 0 10px 28px rgba(255, 64, 129, 0.48);
+        }
+
+        .btn-open:active {
+            transform: scale(0.95);
+            box-shadow: 0 4px 14px rgba(255, 64, 129, 0.3);
+        }
+
+        /* Area Surat Teks (Hidden Awal) */
+        .letter-box {
+            display: none;
+            text-align: left;
+            background: #fffdfd;
+            border: 2px dashed #ff9bb7;
+            border-radius: 20px;
+            padding: clamp(16px, 4.5vw, 22px);
+            margin-top: 14px;
+            box-shadow: inset 0 2px 6px rgba(255, 128, 171, 0.06);
+            animation: fadeInUp 0.7s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+            max-height: 60vh;
+            overflow-y: auto;
+            -webkit-overflow-scrolling: touch;
+            scrollbar-width: thin;
+            scrollbar-color: #ff80ab transparent;
+        }
+
+        .letter-box::-webkit-scrollbar {
+            width: 4px;
+        }
+
+        .letter-box::-webkit-scrollbar-thumb {
+            background-color: #ff80ab;
+            border-radius: 10px;
+        }
+
+        .letter-text {
+            font-size: clamp(0.88rem, 3.8vw, 0.96rem);
+            color: #374151;
+            line-height: 1.78;
+            white-space: pre-line;
+            font-weight: 400;
+        }
+
+        /* Cursor berkedip saat mengetik */
+        .cursor-blink {
+            display: inline-block;
+            width: 2px;
+            height: 1.1em;
+            background-color: var(--primary);
+            vertical-align: middle;
+            margin-left: 2px;
+            animation: blink 0.7s infinite;
+        }
+
+        @keyframes blink {
+
+            0%,
+            100% {
+                opacity: 1;
+            }
+
+            50% {
+                opacity: 0;
+            }
+        }
+
+        .signature {
+            font-family: 'Caveat', cursive;
+            font-size: clamp(1.4rem, 5.5vw, 1.7rem);
+            color: var(--primary-dark);
+            text-align: right;
+            margin-top: 18px;
+            display: none;
+            animation: fadeIn 1s ease forwards;
+        }
+
+        /* Mobile Hint */
+        .mobile-hint {
+            margin-top: 16px;
+            font-size: 0.78rem;
+            color: #9ca3af;
+            user-select: none;
+        }
+
+        /* Keyframes */
+        @keyframes bounce {
+
+            0%,
+            100% {
+                transform: translateY(0);
+            }
+
+            50% {
+                transform: translateY(-10px);
+            }
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(24px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(6px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Responsive tweaks untuk layar HP kecil (<360px) */
+        @media (max-width: 360px) {
+            body {
+                padding: 12px 10px;
+            }
+
+            .starter-card,
+            .envelope-wrapper {
+                border-radius: 20px;
+                padding: 18px 12px;
+            }
+
+            .btn-open,
+            .blow-guide-btn {
+                padding: 12px 20px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="container">
+        <!-- ==========================================
+             SCENE 1: STARTER PAGE KUE & TIUP LILIN
+        =========================================== -->
+        <div id="starterScene">
+            <div class="starter-card">
+                <h2 class="cake-title" id="starterTitle">Make a Wish! 🎂✨</h2>
+                <p class="cake-subtitle" id="starterSub">Pejamkan mata, make a wish dulu ya Delvia... 🕯️</p>
+
+                <!-- Bagian Kue Interaktif yang Bisa Ditekan/Ditiup -->
+                <div class="cake-clickable-area" id="cakeClickArea" onclick="blowCandle()">
+                    <div class="cake-box">
+                        <!-- Lilin & Api -->
+                        <div class="candle">
+                            <div class="wick"></div>
+                            <div class="flame" id="candleFlame"></div>
+                            <div class="smoke" id="candleSmoke">💨</div>
+                        </div>
+
+                        <!-- Top Tier Layer -->
+                        <div class="cake-top-tier">
+                            <div class="cherry left"></div>
+                            <div class="cherry right"></div>
+                        </div>
+
+                        <!-- Bottom Tier Layer -->
+                        <div class="cake-bottom-tier"></div>
+
+                        <!-- Plate -->
+                        <div class="plate"></div>
+                    </div>
+                </div>
+
+                <br />
+                <!-- Tombol Panduan / Alternatif Klik -->
+                <button class="blow-guide-btn" id="blowBtn" onclick="blowCandle()">
+                    <span>💨</span> Ketuk Kue Untuk Tiup Lilin!
+                </button>
+            </div>
+
+            <p class="mobile-hint">✨ Sentuh kuenya atau tombol untuk meniup lilin ✨</p>
+        </div>
+
+        <!-- ==========================================
+             SCENE 2: HALAMAN BUKA SURAT
+        =========================================== -->
+        <div id="letterScene">
+            <h2 class="title" id="mainTitle">Halooowww Delvia! 🐧✨</h2>
+
+            <div class="envelope-wrapper" id="card">
+                <div class="pinguin-icon">💌</div>
+                <p class="subtext" id="subText">Buka yu pesannya...</p>
+
+                <button class="btn-open" id="openBtn" onclick="readLetter()">Buka Suratnya ✨</button>
+
+                <div class="letter-box" id="letterBox">
+                    <span class="letter-text" id="typedText"></span><span class="cursor-blink" id="cursor"></span>
+                    <div class="signature" id="sigText">— Dari ehannn 😊</div>
+                </div>
+            </div>
+
+            <p class="mobile-hint" id="touchHint">✨ Sentuh layar di mana saja untuk efek hati ✨</p>
+        </div>
+    </div>
+
+    <script>
+        // 1. Efek Hujan Hati / Floating Hearts di Background
+        function createHeart() {
+            const heart = document.createElement('div');
+            heart.classList.add('heart-bg');
+            const icons = ['💖', '🌸', '✨', '🤍', '🐧', '🎂', '🥳'];
+            heart.innerText = icons[Math.floor(Math.random() * icons.length)];
+            heart.style.left = Math.random() * 96 + 'vw';
+            heart.style.animationDuration = (Math.random() * 2.5 + 3.5) + 's';
+            heart.style.fontSize = (Math.random() * 12 + 16) + 'px';
+            document.body.appendChild(heart);
+
+            setTimeout(() => {
+                heart.remove();
+            }, 6000);
+        }
+        setInterval(createHeart, 350);
+
+        // 2. Interaksi Sentuh Layar di Handphone (Touch & Click Burst)
+        function spawnTouchParticle(x, y) {
+            const particle = document.createElement('div');
+            particle.classList.add('tap-particle');
+            const sparkIcons = ['💖', '🐧', '✨', '🌸', '💕', '⭐'];
+            particle.innerText = sparkIcons[Math.floor(Math.random() * sparkIcons.length)];
+            particle.style.left = x + 'px';
+            particle.style.top = y + 'px';
+            document.body.appendChild(particle);
+
+            setTimeout(() => {
+                particle.remove();
+            }, 1000);
+        }
+
+        window.addEventListener('pointerdown', function (e) {
+            // Jangan trigger jika klik elemen interaktif utama
+            if (e.target.closest('#openBtn') || e.target.closest('#cakeClickArea') || e.target.closest('#blowBtn')) return;
+            spawnTouchParticle(e.clientX, e.clientY);
+        });
+
+        // 3. Suara Tiupan Lilin & Chime Gembira (Web Audio API)
+        function playBlowSound() {
+            try {
+                const AudioContext = window.AudioContext || window.webkitAudioContext;
+                if (!AudioContext) return;
+                const ctx = new AudioContext();
+
+                // Sound 1: Efek Hembusan Angin Halus (Whoosh / Blow)
+                const bufferSize = ctx.sampleRate * 0.4;
+                const buffer = ctx.createBuffer(1, bufferSize, ctx.sampleRate);
+                const data = buffer.getChannelData(0);
+                for (let i = 0; i < bufferSize; i++) {
+                    data[i] = (Math.random() * 2 - 1) * Math.exp(-i / (ctx.sampleRate * 0.15));
+                }
+                const noise = ctx.createBufferSource();
+                noise.buffer = buffer;
+                const filter = ctx.createBiquadFilter();
+                filter.type = 'lowpass';
+                filter.frequency.setValueAtTime(400, ctx.currentTime);
+                filter.frequency.linearRampToValueAtTime(120, ctx.currentTime + 0.35);
+
+                const gain = ctx.createGain();
+                gain.gain.setValueAtTime(0.3, ctx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.38);
+
+                noise.connect(filter);
+                filter.connect(gain);
+                gain.connect(ctx.destination);
+                noise.start(ctx.currentTime);
+
+                // Sound 2: Nada Melodi Selamat / Wish Granted
+                setTimeout(() => {
+                    const notes = [523.25, 659.25, 783.99, 1046.50]; // C5, E5, G5, C6
+                    notes.forEach((freq, i) => {
+                        const osc = ctx.createOscillator();
+                        const g = ctx.createGain();
+                        osc.type = 'sine';
+                        osc.frequency.setValueAtTime(freq, ctx.currentTime + i * 0.1);
+
+                        g.gain.setValueAtTime(0.001, ctx.currentTime + i * 0.1);
+                        g.gain.exponentialRampToValueAtTime(0.18, ctx.currentTime + i * 0.1 + 0.03);
+                        g.gain.exponentialRampToValueAtTime(0.0001, ctx.currentTime + i * 0.1 + 0.55);
+
+                        osc.connect(g);
+                        g.connect(ctx.destination);
+                        osc.start(ctx.currentTime + i * 0.1);
+                        osc.stop(ctx.currentTime + i * 0.1 + 0.6);
+                    });
+                }, 200);
+            } catch (e) {
+                console.log('Audio not supported or muted:', e);
+            }
+        }
+
+        // 4. Logika Tiup Lilin & Transisi ke Surat
+        let candleBlown = false;
+
+        function blowCandle() {
+            if (candleBlown) return;
+            candleBlown = true;
+
+            // 1. Padamkan api lilin
+            const flame = document.getElementById("candleFlame");
+            if (flame) flame.classList.add("blown-out");
+
+            // 2. Munculkan efek asap tiup
+            const smoke = document.getElementById("candleSmoke");
+            if (smoke) smoke.classList.add("puff-up");
+
+            // 3. Suara tiupan & melodi perayaan
+            playBlowSound();
+
+            // 4. Semburan Confetti Spesial Tiup Lilin
+            triggerConfetti();
+
+            // 5. Update teks instruksi
+            document.getElementById("starterTitle").innerText = "Yeaaay! Make a wish! ✨";
+            document.getElementById("starterSub").innerText = "Semoga semua harapan baikmu terkabul yaa 🤍";
+            document.getElementById("blowBtn").style.display = "none";
+
+            // 6. Transisi mulus ke halaman buka surat
+            setTimeout(() => {
+                const starterScene = document.getElementById("starterScene");
+                starterScene.classList.add("fade-out");
+
+                setTimeout(() => {
+                    starterScene.style.display = "none";
+                    const letterScene = document.getElementById("letterScene");
+                    letterScene.classList.add("active");
+
+                    // Scroll smooth ke kartu surat jika perlu
+                    letterScene.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                }, 650);
+            }, 1200);
+        }
+
+        // 5. Teks Surat buat Delvia dari Ehannn
+        const letterContent =
+            `Selamat ulang tahun yaa Mygirl!! 💖
+
+Makasiiii banyak udah lahir ke duniaaa dan bikin hari hari ak jadi jauh lebih senenggg. Dari sekadar main di gbk , jajan random,jalan jalan ke perpus, sampai momen momen main sama kamuuu yang random ituu,dann makann kukiss kamuuu yang saking enak nya aku gabisa jelasin itu pake kata2... semuanya selalu jadi hal favorit aku.andd Makasih ya udah selalu bikin aku senengg.
+
+i hope di usiaaa yang baruu ini kamu selalu sehattt, makin bahagiaa, dan semogaa ulangan tkanyaa nantii dapet hasil yang memuaskannn, makin banyak senyumm kamu yang lucu ituuu . Tetap jadi delpia yang selalu aku kenall yaaaa! Loveee uuuu🤍`;
+
+        let index = 0;
+        let isTyping = false;
+
+        // 6. Efek Suara Melodi Lembut saat Buka Surat
+        function playChime() {
+            try {
+                const AudioContext = window.AudioContext || window.webkitAudioContext;
+                if (!AudioContext) return;
+                const ctx = new AudioContext();
+
+                const notes = [523.25, 659.25, 783.99, 1046.50];
+                notes.forEach((freq, i) => {
+                    const osc = ctx.createOscillator();
+                    const gain = ctx.createGain();
+                    osc.type = 'sine';
+                    osc.frequency.setValueAtTime(freq, ctx.currentTime + i * 0.12);
+
+                    gain.gain.setValueAtTime(0.001, ctx.currentTime + i * 0.12);
+                    gain.gain.exponentialRampToValueAtTime(0.18, ctx.currentTime + i * 0.12 + 0.03);
+                    gain.gain.exponentialRampToValueAtTime(0.0001, ctx.currentTime + i * 0.12 + 0.6);
+
+                    osc.connect(gain);
+                    gain.connect(ctx.destination);
+                    osc.start(ctx.currentTime + i * 0.12);
+                    osc.stop(ctx.currentTime + i * 0.12 + 0.65);
+                });
+            } catch (err) {
+                console.log('Audio chime not supported or muted:', err);
+            }
+        }
+
+        // 7. Fungsi Ketik Otomatis dengan Auto-Scroll untuk Layar HP
+        function typeWriter() {
+            if (index < letterContent.length) {
+                const char = letterContent.charAt(index);
+                document.getElementById("typedText").innerHTML += char;
+                index++;
+
+                // Auto scroll halus pada surat di HP agar kalimat terbaru selalu kelihatan
+                const letterBox = document.getElementById("letterBox");
+                letterBox.scrollTop = letterBox.scrollHeight;
+
+                // Kecepatan mengetik natural
+                const speed = (char === '\n') ? 90 : (char === '.' || char === '!' || char === '?') ? 140 : 32;
+                setTimeout(typeWriter, speed);
+            } else {
+                isTyping = false;
+                document.getElementById("cursor").style.display = "none";
+                const sig = document.getElementById("sigText");
+                sig.style.display = "block";
+
+                const letterBox = document.getElementById("letterBox");
+                letterBox.scrollTop = letterBox.scrollHeight;
+
+                // Confetti penutup setelah selesai membaca
+                triggerConfetti();
+            }
+        }
+
+        // 8. Efek Confetti Bintang & Warna Warni
+        function triggerConfetti() {
+            if (typeof confetti === 'function') {
+                confetti({
+                    particleCount: 80,
+                    spread: 85,
+                    origin: { y: 0.6 },
+                    colors: ['#ff4081', '#ff80ab', '#ad1457', '#ffd54f', '#ffffff']
+                });
+            }
+        }
+
+        // 9. Aksi Buka Surat
+        function readLetter() {
+            if (isTyping) return;
+            isTyping = true;
+
+            // Bunyikan chime perayaan
+            playChime();
+
+            // Efek confetti meriah saat tombol ditekan
+            triggerConfetti();
+
+            document.getElementById("openBtn").style.display = "none";
+            document.getElementById("subText").style.display = "none";
+            document.getElementById("mainTitle").innerText = "Happy Birthday Delvia! 🎂✨";
+
+            const letterBox = document.getElementById("letterBox");
+            letterBox.style.display = "block";
+
+            // Scroll ke kartu agar nyaman di HP
+            setTimeout(() => {
+                letterBox.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+            }, 100);
+
+            typeWriter();
+        }
+    </script>
+</body>
+
+</html>
